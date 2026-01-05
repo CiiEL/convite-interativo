@@ -40,6 +40,7 @@
       text-align:center;
       box-shadow:0 14px 34px rgba(0,0,0,.30);
       animation: popIn .75s cubic-bezier(.16,1.2,.32,1) both;
+      z-index:10;
     }
     @keyframes popIn{
       0%   { transform:scale(.85) translateY(10px); opacity:0 }
@@ -80,8 +81,8 @@
       animation: pulse 1.35s ease-in-out infinite;
     }
     @keyframes pulse{
-      0%,100% { transform:scale(1);   filter:brightness(1) }
-      50%     { transform:scale(1.05);filter:brightness(1.08) }
+      0%,100% { transform:scale(1); filter:brightness(1) }
+      50%     { transform:scale(1.05); filter:brightness(1.08) }
     }
 
     #nao{
@@ -97,59 +98,15 @@
       opacity:0;
       animation: floatUp 3.6s ease-in infinite;
       pointer-events:none;
-      filter: drop-shadow(0 6px 10px rgba(0,0,0,.22));
     }
     @keyframes floatUp{
-      0%   { transform:translateY(0) scale(.9);    opacity:0 }
+      0%   { transform:translateY(0) scale(.9); opacity:0 }
       10%  { opacity:.9 }
       60%  { opacity:.9 }
       100% { transform:translateY(-120vh) scale(1.25); opacity:0 }
     }
 
     .footer{ margin-top:14px; font-size:.92rem; opacity:.75; }
-
-    /* TELA FINAL */
-    .final{
-      position:fixed; inset:0;
-      display:flex; align-items:center; justify-content:center;
-      padding:18px;
-      background: linear-gradient(rgba(0,0,0,.65), rgba(0,0,0,.65));
-      animation: fadeIn .35s ease both;
-      z-index: 50;
-    }
-    @keyframes fadeIn{ from{opacity:0} to{opacity:1} }
-
-    .final .box{
-      width:min(520px,92vw);
-      background: rgba(255,255,255,.10);
-      border:1px solid rgba(255,255,255,.22);
-      border-radius:18px;
-      padding:16px;
-      backdrop-filter: blur(6px);
-      box-shadow:0 14px 34px rgba(0,0,0,.35);
-      color:#fff;
-      text-align:center;
-      animation: popIn .7s cubic-bezier(.16,1.2,.32,1) both;
-    }
-    .final h2{ margin:6px 0 10px; font-size:1.45rem; }
-    .final .photo{
-      width:100%;
-      max-height:55vh;
-      object-fit: cover;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.25);
-      box-shadow:0 10px 24px rgba(0,0,0,.35);
-    }
-    .final .cta{
-      margin-top:12px;
-      font-size:1.05rem;
-      line-height:1.35;
-    }
-    .final .hint{
-      margin-top:10px;
-      opacity:.9;
-      font-size:.95rem;
-    }
 
     /* OVERLAY START */
     #startOverlay{
@@ -165,7 +122,7 @@
       font-family:'Segoe UI', system-ui, Arial, sans-serif;
     }
     #startOverlay .box{
-      width:min(420px, 92vw);
+      width:min(420px,92vw);
       background:rgba(255,255,255,.10);
       border:1px solid rgba(255,255,255,.20);
       border-radius:18px;
@@ -175,19 +132,47 @@
       box-shadow:0 14px 34px rgba(0,0,0,.35);
       animation: popIn .7s cubic-bezier(.16,1.2,.32,1) both;
     }
+
+    /* TELA FINAL */
+    .final{
+      position:fixed; inset:0;
+      display:flex; align-items:center; justify-content:center;
+      padding:18px;
+      background: linear-gradient(rgba(0,0,0,.65), rgba(0,0,0,.65));
+      z-index:50;
+    }
+    .final .box{
+      width:min(520px,92vw);
+      background: rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.22);
+      border-radius:18px;
+      padding:16px;
+      color:#fff;
+      text-align:center;
+      backdrop-filter: blur(6px);
+      animation: popIn .7s cubic-bezier(.16,1.2,.32,1) both;
+    }
+    .final .photo{
+      width:100%;
+      max-height:55vh;
+      object-fit:cover;
+      border-radius:14px;
+      margin-bottom:10px;
+    }
   </style>
 </head>
 
 <body>
-  <!-- ÁUDIO (coloque editada.mp3 na mesma pasta do index.html) -->
+
+  <!-- ÁUDIO -->
   <audio id="bg-music" src="editada.mp3" preload="auto"></audio>
 
-  <!-- OVERLAY: toca pra continuar -->
+  <!-- OVERLAY -->
   <div id="startOverlay">
     <div class="box">
-      <div style="font-size:28px; margin-bottom:8px;">💫</div>
-      <div style="font-size:18px; font-weight:600; margin-bottom:6px;">toca pra continuar</div>
-      <div style="opacity:.9; font-size:14px;">(eu prometo que vale a pena 😌)</div>
+      <div style="font-size:28px">💫</div>
+      <div style="font-size:18px;font-weight:600">toca pra continuar</div>
+      <div style="opacity:.9;font-size:14px">(eu prometo que vale a pena 😌)</div>
     </div>
   </div>
 
@@ -206,116 +191,81 @@
   </div>
 
   <script>
-    // ====== START OVERLAY + MÚSICA (mobile safe) ======
+    /* OVERLAY + MÚSICA */
     const music = document.getElementById("bg-music");
     const overlay = document.getElementById("startOverlay");
 
-    function startExperience() {
-      // evita duplo clique
-      overlay.style.pointerEvents = "none";
-
+    function startExperience(){
       music.volume = 0.6;
-      music.play().catch(() => { /* alguns browsers podem bloquear se não considerar o gesto */ });
-
+      music.play().catch(()=>{});
       overlay.remove();
     }
-
-    overlay.addEventListener("click", startExperience, { once: true });
-    overlay.addEventListener("touchstart", (e) => {
+    overlay.addEventListener("click", startExperience, { once:true });
+    overlay.addEventListener("touchstart", (e)=>{
       e.preventDefault();
       startExperience();
-    }, { passive: false, once: true });
+    }, { passive:false, once:true });
 
-    // ====== RESTO DO APP ======
+    /* BOTÃO NÃO */
     const arena = document.getElementById("arena");
     const btnNao = document.getElementById("nao");
     const btnSim = document.getElementById("sim");
 
-    // corações bregas
-    const hearts = ["💖","💘","💞","💓","💕","😍"];
-    function spawnHeart(){
-      const h = document.createElement("div");
-      h.className = "heart";
-      h.textContent = hearts[Math.floor(Math.random()*hearts.length)];
-      h.style.left = Math.random()*100 + "vw";
-      h.style.animationDuration = (3 + Math.random()*2.5) + "s";
-      h.style.fontSize = (16 + Math.random()*18) + "px";
-      h.style.animationDelay = (Math.random()*.8) + "s";
-      document.body.appendChild(h);
-      requestAnimationFrame(()=>{ h.style.opacity="1"; });
-      setTimeout(()=>h.remove(), 6500);
-    }
-    setInterval(spawnHeart, 550);
-
-    function randomPositionInsideArena(el){
-      const rect = arena.getBoundingClientRect();
-      const elRect = el.getBoundingClientRect();
-      const padding = 10;
-      const maxX = rect.width - elRect.width - padding;
-      const maxY = rect.height - elRect.height - padding;
-
-      const x = padding + Math.random() * Math.max(0, maxX - padding);
-      const y = padding + Math.random() * Math.max(0, maxY - padding);
-
-      return { x, y };
+    function randomPos(el){
+      const r = arena.getBoundingClientRect();
+      const e = el.getBoundingClientRect();
+      return {
+        x: Math.random() * (r.width - e.width),
+        y: Math.random() * (r.height - e.height)
+      };
     }
 
     function moveNao(){
-      const {x,y} = randomPositionInsideArena(btnNao);
-      btnNao.style.left = `${x}px`;
-      btnNao.style.top = `${y}px`;
+      const {x,y} = randomPos(btnNao);
+      btnNao.style.left = x + "px";
+      btnNao.style.top = y + "px";
       btnNao.style.right = "auto";
       btnNao.style.bottom = "auto";
-      btnNao.style.transform = "rotate(" + (Math.random()*10 - 5) + "deg)";
     }
 
-    // Desktop: foge no hover
     btnNao.addEventListener("mouseenter", moveNao);
+    btnNao.addEventListener("pointerdown", e => { e.preventDefault(); moveNao(); });
+    btnNao.addEventListener("touchstart", e => { e.preventDefault(); moveNao(); }, { passive:false });
 
-    // Mobile/geral: foge ANTES do toque
-    btnNao.addEventListener("pointerdown", (e)=>{ e.preventDefault(); moveNao(); });
-    btnNao.addEventListener("touchstart", (e)=>{ e.preventDefault(); moveNao(); }, { passive:false });
-    btnNao.addEventListener("click", (e)=>{ e.preventDefault(); moveNao(); });
+    /* CORAÇÕES */
+    setInterval(()=>{
+      const h = document.createElement("div");
+      h.className="heart";
+      h.textContent=["💖","💘","💞","💕"][Math.floor(Math.random()*4)];
+      h.style.left=Math.random()*100+"vw";
+      h.style.fontSize=14+Math.random()*18+"px";
+      document.body.appendChild(h);
+      setTimeout(()=>h.remove(),4000);
+    },600);
 
-    // Sim: tela final
+    /* SIM */
     btnSim.addEventListener("click", ()=>{
       const final = document.createElement("div");
-      final.className = "final";
-      final.innerHTML = `
+      final.className="final";
+      final.innerHTML=`
         <div class="box">
-          <img class="photo" src="jogo.jpg" alt="nós dois jogando" />
-          <h2>Preparada pra perder de novo? 😂😂</h2>
-
-          <div class="cta">
-            Então… <strong>que horas te pego? </strong>
-          </div>
-
-          <a
-            href="https://wa.me/5561982015025?text=vou%20estar%20te%20esperando%20as%2019%3A30%20%F0%9F%98%98"
-            target="_blank"
-            style="
-              display:inline-block;
-              margin-top:14px;
-              padding:12px 18px;
-              background:#25D366;
-              color:white;
-              text-decoration:none;
-              border-radius:12px;
-              font-size:16px;
-              box-shadow:0 10px 20px rgba(0,0,0,.25);
-            "
-          >
-            vou estar te esperando 😌💚
+          <img src="jogo.jpg" class="photo" />
+          <h2>Preparada pra perder de novo? 😄😂😂😂</h2>
+          <p>Então… <strong>Te Pego às 19:30?</strong></p>
+          <a href="https://wa.me/5561982015025?text=vou%20estar%20te%20esperando%20as%2019%3A30%20%F0%9F%98%98"
+             target="_blank"
+             style="display:inline-block;margin-top:12px;padding:12px 18px;
+                    background:#25D366;color:#fff;text-decoration:none;
+                    border-radius:12px">
+             
+            "HORÁRIO CONTANDO COM VC ME ENROLANDO 3H PRA SE ARRUMAR" 😌💚
+                    (Clica que ja vai responder no WhatsApp 😉)
           </a>
-
-          <div class="hint">(abre o WhatsApp 😉)</div>
         </div>
       `;
       document.body.appendChild(final);
     });
-
-    // bônus: dá uma fugidinha no começo
-    setTimeout(moveNao, 600);
   </script>
+
 </body>
 </html>
